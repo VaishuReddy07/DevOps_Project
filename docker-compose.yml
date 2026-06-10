@@ -1,0 +1,42 @@
+services:
+  mysite:
+    image: myapp
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mysite
+    ports:
+      - "8000:8000"
+    environment:
+      - SERVER_HOST=0.0.0.0
+      - SERVER_PORT=8000
+      - MYSQL_HOST=mysql-container
+      - MYSQL_PORT=3306
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=root123
+      - MYSQL_DATABASE=mydb
+    depends_on:
+      - mysql-container
+    networks:
+      - mynetwork
+
+  mysql-container:
+    image: mysql:8
+    container_name: mysql-container
+    environment:
+      - MYSQL_ROOT_PASSWORD=root123
+      - MYSQL_DATABASE=mydb
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
+    driver: bridge
+
+volumes:
+  mysql-data:
+    driver: local
