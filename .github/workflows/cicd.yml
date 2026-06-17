@@ -34,8 +34,18 @@ jobs:
           flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
-      - name: Build DevOps Assignment Docker Image
-        run: docker build -t vaishnavi-devops-project:v1 .
+      # New Step: Log into Docker Hub so you have permission to push the image
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # Updated Step: Build AND Push the image using the unique GitHub SHA tag
+      - name: Build and Push Docker Image
+        run: |
+          docker build -t vaishnaviputta/devops-project:${{ github.sha }} .
+          docker push vaishnaviputta/devops-project:${{ github.sha }}
 
   deploy:
     runs-on: ubuntu-latest
@@ -49,11 +59,14 @@ jobs:
           username: ${{ secrets.VM_USER }}
           key: ${{ secrets.VM_SSH_KEY }}
           script: |
+            # Navigate to where your application files live
             cd ~/app
             echo "TAG=${{ github.sha }}" > .env
+            
+            # Dynamically update the image tag in your docker-compose file
             sed -i "s|image: vaishnaviputta/devops-project:.*|image: vaishnaviputta/devops-project:${{ github.sha }}|g" docker-compose.yml
-            cd ~/DevOps
-            git pull origin master
-            docker-compose pull
-            docker-compose down
-            docker-compose up -d
+            
+            # Pull the newly pushed image from Docker Hub and restart the containers
+            docker compose pull
+            docker compose down
+            docker compose up -d
