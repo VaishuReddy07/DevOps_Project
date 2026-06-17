@@ -61,10 +61,22 @@ jobs:
             echo "TAG=${{ github.sha }}" > .env
             sed -i "s|image: vaishnaviputta/devops-project:.*|image: vaishnaviputta/devops-project:${{ github.sha }}|g" docker-compose.yml
             
-            # Authenticate the Azure VM with Docker Hub before pulling
+            # Authenticate with Docker Hub
             echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
             
-            # Execute the deployment cycle
+            # Pull down the latest image versions
             docker-compose pull
-            docker-compose down
+            
+            # --- HOUSEKEEPING: Force clean conflicting resources ---
+            # Stop and remove existing project stack safely
+            docker-compose down --remove-orphans
+            
+            # Explicitly stop and remove any conflicting container named mysql_v1
+            docker rm -f mysql_v1 || true
+            
+            # Stop any other loose container occupying Port 80 to avoid bind errors
+            docker ps -q --filter "publish=80" | xargs -r docker rm -f || true
+            # --------------------------------------------------------
+
+            # Spin up everything cleanly
             docker-compose up -d
