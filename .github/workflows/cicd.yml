@@ -67,16 +67,18 @@ jobs:
             # Pull down the latest image versions
             docker-compose pull
             
-            # --- HOUSEKEEPING: Force clean conflicting resources ---
-            # Stop and remove existing project stack safely
+            # --- HOUSEKEEPING: Clear everything on Port 80 ---
             docker-compose down --remove-orphans
-            
-            # Explicitly stop and remove any conflicting container named mysql_v1
             docker rm -f mysql_v1 || true
-            
-            # Stop any other loose container occupying Port 80 to avoid bind errors
             docker ps -q --filter "publish=80" | xargs -r docker rm -f || true
-            # --------------------------------------------------------
+            
+            # NEW: Stop native host web servers (Nginx/Apache) that might be running on the OS
+            sudo systemctl stop nginx || true
+            sudo systemctl stop apache2 || true
+            
+            # NEW: Fallback kill for any lingering background process on port 80
+            sudo fuser -k 80/tcp || true
+            # -------------------------------------------------
 
             # Spin up everything cleanly
             docker-compose up -d
