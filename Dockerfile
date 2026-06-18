@@ -1,13 +1,14 @@
-FROM python:3.9-slim
-
+FROM python:3.11-slim
+ 
 WORKDIR /app
-
+ 
 COPY requirements.txt .
-
+ 
 RUN pip install --no-cache-dir -r requirements.txt
 RUN pip install mysql-connector-python
+ 
 COPY . .
-
+ 
 EXPOSE 8000
-
-CMD ["python", "runserver.py"]
+ 
+CMD ["python", "FlaskWebProject1/app.py"]
