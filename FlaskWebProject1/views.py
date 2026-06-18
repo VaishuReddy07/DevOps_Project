@@ -2,21 +2,18 @@ import mysql.connector
 from FlaskWebProject1 import app
 from flask import jsonify
 from datetime import datetime
+import os
 
-@app.route("")
+@app.route("/")
 def home():
-    ...
-    
-# @app.route("/version")
-# def version():
-#     return jsonify({"version": "1.0"})
+    return "Hello, World!"
+
 @app.route("/version")
 def version():
     return jsonify({
-        "instance": "flask-app-1",
-        "version": "500.0"
+        "instance": os.environ.get("INSTANCE_NAME"),
+        "version": os.environ.get("APP_VERSION")
     })
-
 @app.route("/db")
 def db_test():
     try:

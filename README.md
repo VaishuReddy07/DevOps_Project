@@ -1,6 +1,5 @@
 # To connect my VM
-ssh -i "C:\Users\Vaishnavi\Downloads\azure_key.pem" azureuser@20.240.187.128
- 
+ssh -i "C:\Users\Vaishnavi\Downloads\azure_key.pem" azureuser@20.240.187.128 
 # update and download nginx
 sudo apt update
 sudo apt upgrade -y
