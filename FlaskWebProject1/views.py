@@ -3,13 +3,19 @@ from FlaskWebProject1 import app
 from flask import jsonify
 from datetime import datetime
 
-@app.route("/")
+@app.route("")
 def home():
     ...
     
+# @app.route("/version")
+# def version():
+#     return jsonify({"version": "1.0"})
 @app.route("/version")
 def version():
-    return jsonify({"version": "1.0"})
+    return jsonify({
+        "instance": "flask-app-1",
+        "version": "500.0"
+    })
 
 @app.route("/db")
 def db_test():
