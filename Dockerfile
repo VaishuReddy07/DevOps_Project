@@ -8,6 +8,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 RUN pip install mysql-connector-python
 COPY . .
 
-EXPOSE 8080
+EXPOSE 8000
 
 CMD ["python", "runserver.py"]

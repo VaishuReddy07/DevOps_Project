@@ -1,28 +1,45 @@
+# services:
+#   mysql:
+#     image: mysql:8
+#     container_name: mysql
+#     restart: always
+#     environment:
+#       MYSQL_ROOT_PASSWORD: root123
+#       MYSQL_DATABASE: mysql
+#     volumes:
+#       - mysql-data:/var/lib/mysql
+
+#   mysite:
+#     image: vaishnaviputta/devops-project:v5
+#     container_name: mysite
+#     restart: always
+#     depends_on:
+#       - mysql
+#     ports:
+#       - "8080:8000"
+#     environment:
+#       MYSQL_HOST: mysql
+#       MYSQL_USER: root
+#       MYSQL_PASSWORD: root123
+#       MYSQL_DB: mysql
+
+# volumes:
+#   mysql-data:
+
+version: '3'
+
 services:
-  mysql:
-    image: mysql:8
-    container_name: mysql
+
+  flask-app-1:
+    image: vaishnaviputta/devops-project:${APP1_IMAGE_TAG}
+    container_name: flask-app-1
     restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: root123
-      MYSQL_DATABASE: mysql
-    volumes:
-      - mysql-data:/var/lib/mysql
- 
-  mysite:
-    image: vaishnaviputta/devops-project:latest
-    container_name: mysite
-    restart: always
-    depends_on:
-      - mysql
     ports:
-      - "8080:8080"
-    environment:
-      MYSQL_HOST: mysql
-      MYSQL_USER: root
-      MYSQL_PASSWORD: root123
-      MYSQL_DB: mysql
- 
-volumes:
-  mysql-data:  
- 
+      - "8001:8000"
+
+  flask-app-2:
+    image: vaishnaviputta/devops-project:${APP2_IMAGE_TAG}
+    container_name: flask-app-2
+    restart: always
+    ports:
+      - "8002:8000"
